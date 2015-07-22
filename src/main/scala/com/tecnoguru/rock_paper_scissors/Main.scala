@@ -35,15 +35,12 @@ object Main {
       System.exit(0)
     }
 
-    val userOption = args(0).toLowerCase match {
-      case "rock"     ⇒ Some(Rock)
-      case "paper"    ⇒ Some(Paper)
-      case "scissors" ⇒ Some(Scissors)
-      case "computer" ⇒ None
-      case _ ⇒
-        println("Illegal option. You must use rock, paper, scissors or computer")
-        System.exit(0)
-        None // Here so the type checker does not complain
+    val argument = args(0).toLowerCase
+    val userOption = Canonical.nameToItem.get(argument)
+
+    if (userOption.isEmpty && argument != "computer") {
+      println("Illegal option. You must use rock, paper, scissors or computer")
+      System.exit(0)
     }
     // $COVERAGE-ON
 

@@ -7,6 +7,11 @@ trait GameDefinition {
   import GameDefinition._
 
   /**
+   * A Map used to convert item names to items
+   */
+  val nameToItem: Map[String, Item]
+
+  /**
    * Here we store the rules for this specific game
    */
   private var rules: Map[(Item, Item), String] = Map.empty

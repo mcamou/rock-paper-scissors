@@ -22,5 +22,9 @@ class CanonicalSpec extends WordSpec with MustMatchers {
       check(Scissors, Paper) mustEqual Win(Scissors, "cuts", Paper)
       check(Paper, Scissors) mustEqual Win(Scissors, "cuts", Paper)
     }
+
+    "correctly map names to items" in {
+      Canonical.nameToItem must contain theSameElementsAs Map("rock" -> Rock, "paper" -> Paper, "scissors" -> Scissors)
+    }
   }
 }
