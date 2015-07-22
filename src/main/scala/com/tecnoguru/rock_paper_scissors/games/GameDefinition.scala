@@ -28,13 +28,17 @@ trait GameDefinition {
    * @return A Result indicating which item wins, which one loses, and what the relationship between them is
    */
   def check(item1: Item, item2: Item): Result = {
-    val winner1 = rules.get((item1, item2))
-    val winner2 = rules.get((item2, item1))
+    if (item1 == item2) {
+      Tie
+    } else {
+      val winner1 = rules.get((item1, item2))
+      val winner2 = rules.get((item2, item1))
 
-    (winner1, winner2) match {
-      case (Some(name), None) ⇒ Result(item1, name, item2)
-      case (None, Some(name)) ⇒ Result(item2, name, item1)
-      case _                  ⇒ throw new IllegalStateException("Illegal game")
+      (winner1, winner2) match {
+        case (Some(name), None) ⇒ Win(item1, name, item2)
+        case (None, Some(name)) ⇒ Win(item2, name, item1)
+        case _                  ⇒ throw new IllegalStateException("Illegal game")
+      }
     }
   }
 }
@@ -49,10 +53,20 @@ object GameDefinition {
   trait Item
 
   /**
+   * Sealed trait to mark the different types of results
+   */
+  trait Result
+
+  /**
    * The Result of a specific check, indicating which item wins, which one loses, and what the relationship between them is
    * @param winner The winning item of the contest
    * @param name The name of the relationship
    * @param loser The losing item of the contest
    */
-  case class Result(winner: Item, name: String, loser: Item)
+  case class Win(winner: Item, name: String, loser: Item) extends Result
+
+  /**
+   * Case object to mark that the result of the game is a tie
+   */
+  case object Tie extends Result
 }
