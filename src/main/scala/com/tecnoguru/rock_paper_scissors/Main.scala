@@ -5,7 +5,7 @@ import java.util.concurrent.TimeUnit
 import akka.actor.{ ActorRef, ActorSystem }
 import akka.pattern.ask
 import akka.util.Timeout
-import com.tecnoguru.rock_paper_scissors.games.{GameDefinition, Canonical}
+import com.tecnoguru.rock_paper_scissors.games.{ GameDefinition, Canonical }
 import com.tecnoguru.rock_paper_scissors.games.Canonical.{ Scissors, Paper, Rock }
 import com.tecnoguru.rock_paper_scissors.games.GameDefinition.{ Win, Tie, Item }
 
@@ -13,13 +13,14 @@ import scala.concurrent.{ ExecutionContext, Future }
 import scala.util.Random
 
 object Main {
-  def main(args: Array[ String ]): Unit = {
+  def main(args: Array[String]): Unit = {
+    // $COVERAGE-OFF$ Disabling coverage for main method since it is a simple test driver
     if (args.length != 1) {
       println(
         """
           |Hello Human. Welcome to Rock-Paper-Scissors!
           |
-          |If you want to do a computer vs computer game, just pass "computer" as a command-line argument
+          |If you want to run a computer vs computer game, just pass "computer" as a command-line argument
           |If you want to play against the computer, pass in your selection (rock, paper or scissors) as a
           |command-line argument
           |
@@ -44,6 +45,7 @@ object Main {
         System.exit(0)
         None // Here so the type checker does not complain
     }
+    // $COVERAGE-ON
 
     startGame(userOption, Canonical)
   }
@@ -84,7 +86,7 @@ object Main {
     }
   }
 
-  private def play(game: ActorRef, player1Name: String, player2Name: String, player1Item: Item, player2Item: Item)(implicit ec: ExecutionContext, timeout: Timeout): Future[ String ] = {
+  private def play(game: ActorRef, player1Name: String, player2Name: String, player1Item: Item, player2Item: Item)(implicit ec: ExecutionContext, timeout: Timeout): Future[String] = {
     game ! player1Item
 
     (game ? player2Item) map {
@@ -99,6 +101,7 @@ object Main {
     }
   }
 
+  // $COVERAGE-OFF$ Disabling coverage for main class since it is a simple test driver
   private def generateComputerItem: Item = {
     Random.nextInt(2) match {
       case 0 ⇒ Rock
@@ -106,4 +109,5 @@ object Main {
       case 2 ⇒ Scissors
     }
   }
+  // $COVERAGE-ON
 }
