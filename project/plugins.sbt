@@ -14,7 +14,7 @@ addSbtPlugin("net.virtual-void" % "sbt-dependency-graph" % "0.7.5")
 
 addSbtPlugin("com.timushev.sbt" % "sbt-updates" % "0.1.9")
 
-addSbtPlugin("org.scoverage" %% "sbt-scoverage" % "0.99.11")
+addSbtPlugin("org.scoverage" % "sbt-scoverage" % "1.2.0")
 
 addSbtPlugin("com.typesafe.sbt" % "sbt-license-report" % "0.1")
 
