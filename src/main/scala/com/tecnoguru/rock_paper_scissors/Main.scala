@@ -41,20 +41,9 @@ object Main {
       System.exit(0)
     }
 
+    val gameDefinition: GameDefinition = selectGame(args)
+
     val userItemArgument = args(0).toLowerCase
-
-    // For real life this is probably not the best idea, I would add some sort of GameTypeRegistry where we could
-    // register games with their names.
-    val gameDefinition: GameDefinition = if (args.length == 1) {
-      Canonical
-    } else if (args(1).toLowerCase == "spock") {
-      RockPaperScissorsLizardSpock
-    } else {
-      println("Illegal game type. Currently the only alternate game type supported is \"spock\"")
-      System.exit(0)
-      Canonical // Useless, necessary because Scala doesn't know that System.exit will never return
-    }
-
     val userOption = gameDefinition.nameToItem.get(userItemArgument)
 
     if (userOption.isEmpty && userItemArgument != "computer") {
@@ -64,6 +53,24 @@ object Main {
     // $COVERAGE-ON
 
     startGame(userOption, gameDefinition)
+  }
+
+  /**
+   * Select the game depending on the parameters the user passed. For real life this is probably not the best idea, I
+   * would add some sort of GameTypeRegistry where we could register games with their names.
+   * @param args
+   * @return
+   */
+  private def selectGame(args: Array[String]): Canonical = {
+    if (args.length == 1) {
+      Canonical
+    } else if (args(1).toLowerCase == "spock") {
+      RockPaperScissorsLizardSpock
+    } else {
+      println("Illegal game type. Currently the only alternate game type supported is \"spock\"")
+      System.exit(0)
+      Canonical // Useless, necessary because Scala doesn't know that System.exit will never return
+    }
   }
 
   /**
