@@ -26,7 +26,8 @@ class GameSpec(_system: ActorSystem) extends TestKit(_system)
       game.tell(Item1, player1.ref)
       game.tell(Item2, player2.ref)
 
-      expectMsg(Win(Item1, "1 is better", Item2))
+      player1.expectMsg(Win(Item1, "1 is better", Item2))
+      player2.expectMsg(Win(Item1, "1 is better", Item2))
     }
   }
 }
