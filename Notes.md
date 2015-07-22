@@ -47,7 +47,7 @@ Thinking it a bit more thoroughly, a better structure is a Map[Tuple2[Item, Item
 For ease of game definition, it would be nice to have some sort of DSL, so that you could define the rules similar to this:
 
 ```scala
-object RockPaperScissors extends Game {
+object RockPaperScissors extends GameDescription {
   rules (
     Rock breaks Scissors,
     Paper wraps Rock,
@@ -57,17 +57,17 @@ object RockPaperScissors extends Game {
 However, for initial implementation, the following syntax should be sufficient:
 
 ```scala
-class RockPaperScissors extends Game {
-  beats(Rock, Scissors, "breaks")
-  beats(Paper, Rock, "wraps")
-  beats(Scissors, Paper, "cuts")
+class RockPaperScissors extends GameDescription {
+  beats(Rock, "breaks", Scissors)
+  beats(Paper, "wraps", Rock)
+  beats(Scissors, "cuts", Paper)
 }	
 ```
-
-The system should validate that there are no conflicting/duplicate rules. Ideally it should also validate that the game is complete (i.e. that there are no missing options)
-
-It would also be good to have some sort of Game Registry, so that we could give the user the option of starting a different Game type each time.
 
 Thinking about Akka, it makes sense for the Game to be an Actor. It would then receive the players' guesses, and as soon as it receives 2 guesses it would send back the result of the game to both participants. This enables us to decouple the business rules from the different clients.
 
 As far as the UI is concerned, an initial version would use the command line. We can later add a REST interface.
+
+The system should validate that there are no conflicting/duplicate rules. Ideally it should also validate that the game is complete (i.e. that there are no missing options)
+
+It would also be good to have some sort of Game Registry, so that we could give the user the option of starting a different Game type each time.
