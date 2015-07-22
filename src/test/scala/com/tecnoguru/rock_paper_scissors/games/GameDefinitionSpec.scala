@@ -1,8 +1,8 @@
 package com.tecnoguru.rock_paper_scissors.games
 
-import org.specs2.mutable.Specification
+import org.scalatest.WordSpec
 
-class GameDefinitionSpec extends Specification {
+class GameDefinitionSpec extends WordSpec {
 
   "A Valid Game Definition" should {
     import ValidGameDefinition._

@@ -6,7 +6,7 @@ val akkaVersion = "2.3.12"
 val sprayVersion = "1.3.3"
 val json4sVersion = "3.2.11"
 val slf4jVersion = "1.7.12"
-val specs2Version = "3.6.2"
+val scalatestVersion = "2.2.4"
 val projectMainClass = Some("com.tecnoguru.rock_paper_scissors.Main")
 
 scalaVersion := "2.11.7"
@@ -37,11 +37,7 @@ libraryDependencies ++= Seq("com.typesafe.akka" %% "akka-actor" % akkaVersion,
 
 // Test dependencies
 libraryDependencies ++= Seq("com.typesafe.akka" %% "akka-testkit" % akkaVersion % "test",
-                            "org.specs2" %% "specs2-core" % specs2Version % "test",
-                            "org.specs2" %% "specs2-matcher" % specs2Version % "test",
-                            "org.specs2" %% "specs2-matcher-extra" % specs2Version % "test",
-                            "org.specs2" %% "specs2-scalacheck" % specs2Version % "test",
-                            "org.scalacheck" %% "scalacheck" % "1.12.3" % "test",
+                            "org.scalatest" %% "scalatest" % scalatestVersion % "test",
                             "io.spray" %% "spray-testkit" % sprayVersion % "test")
 
 scalacOptions ++= Seq("-deprecation", "-unchecked", "-feature", "-Yinline-warnings", "-Xlint")
