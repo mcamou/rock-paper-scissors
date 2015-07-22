@@ -1,6 +1,6 @@
 # Build and execution instructions
 
-First, download and install SBT, either through your package manager of choice or from [http://www.scala-sbt.org/download.html]()
+First, download and install SBT, either through your package manager of choice or from [the SBT download site](http://www.scala-sbt.org/download.html)
 
 Now go to the project's root directory. From here you can either execute the program via SBT using:
 
@@ -34,4 +34,8 @@ To generate the code coverage report, run:
 sbt clean coverage test
 ```
 
-The code coverage reports are written to target/scala-2.11/scoverage-report
+The code coverage reports are written to `target/scala-2.11/scoverage-report`
+
+# Extensions
+
+The game can be easily extended for more complex definitions (i.e. [Rock Paper Scissors Lizard Spock](http://www.samkass.com/theories/RPSSL.html)). For an example of this, see the `com.tecnoguru.rock_paper_scissors.games.RockPaperScissorsLizardSpock` class.
