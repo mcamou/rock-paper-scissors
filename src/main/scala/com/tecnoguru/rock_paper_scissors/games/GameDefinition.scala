@@ -1,11 +1,54 @@
 package com.tecnoguru.rock_paper_scissors.games
 
+/**
+ * All game definitions should implement this trait
+ */
 trait GameDefinition {
-  protected def beats(winner: Item, name: String, loser: Item) = ???
+  import GameDefinition._
 
-  def check(item1: Item, item2: Item): GameDefinition.Result = ???
+  /**
+   * Here we store the rules for this specific game
+   */
+  private var rules: Map[(Item, Item), String] = Map.empty
+
+  /**
+   * Called by subclasses to define the rules of a specific game. Should be called once per each item pair.
+   * @param winner The winning item in this relationship
+   * @param name The name of this relationship (what does this relationship "mean")
+   * @param loser The losing item in this relationship
+   */
+  protected def beats(winner: Item, name: String, loser: Item) = {
+    rules += (winner, loser) -> name
+  }
+
+  /**
+   * Check whether an item beats another item
+   * @param item1 The first item to check
+   * @param item2 The second item to check
+   * @return A Result indicating which item wins, which one loses, and what the relationship between them is
+   */
+  def check(item1: Item, item2: Item): Result = {
+    val winner1 = rules.get((item1, item2))
+    val winner2 = rules.get((item2, item1))
+
+    (winner1, winner2) match {
+      case (Some(name), None) ⇒ Result(item1, name, item2)
+      case (None, Some(name)) ⇒ Result(item2, name, item1)
+      case _                  ⇒ throw new IllegalStateException("Illegal game")
+    }
+  }
 }
 
+/**
+ * Companion class of the GameDefinition trait
+ */
 object GameDefinition {
+
+  /**
+   * The Result of a specific check, indicating which item wins, which one loses, and what the relationship between them is
+   * @param winner The winning item of the contest
+   * @param name The name of the relationship
+   * @param loser The losing item of the contest
+   */
   case class Result(winner: Item, name: String, loser: Item)
 }

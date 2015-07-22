@@ -1,7 +1,7 @@
 package com.tecnoguru.rock_paper_scissors.games
 
 /**
- * A Valid game definition
+ * A Valid game definition, used for testing
  */
 object ValidGameDefinition extends GameDefinition {
 
