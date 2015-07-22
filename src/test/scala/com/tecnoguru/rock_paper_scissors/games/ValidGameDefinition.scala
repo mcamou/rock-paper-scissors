@@ -1,5 +1,7 @@
 package com.tecnoguru.rock_paper_scissors.games
 
+import com.tecnoguru.rock_paper_scissors.games.GameDefinition.Item
+
 /**
  * A Valid game definition, used for testing
  */

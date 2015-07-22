@@ -43,6 +43,10 @@ trait GameDefinition {
  * Companion class of the GameDefinition trait
  */
 object GameDefinition {
+  /**
+   * Marker trait for Items used in GameDefinitions
+   */
+  trait Item
 
   /**
    * The Result of a specific check, indicating which item wins, which one loses, and what the relationship between them is
