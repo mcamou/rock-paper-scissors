@@ -4,7 +4,7 @@ First, download and install SBT, either through your package manager of choice o
 
 Now go to the project's root directory. From here you can either execute the program via SBT using:
 
-`sbt run <parameter>`
+`sbt "run <parameter>"`
 
 Try running `sbt run` without parameters to see the valid parameters.
 

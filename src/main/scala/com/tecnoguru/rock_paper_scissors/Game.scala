@@ -1,8 +1,12 @@
 package com.tecnoguru.rock_paper_scissors
 
 import akka.actor.{ ActorRef, Actor, ActorLogging, Props }
+import akka.util.Timeout
 import com.tecnoguru.rock_paper_scissors.games.GameDefinition
-import com.tecnoguru.rock_paper_scissors.games.GameDefinition.Item
+import com.tecnoguru.rock_paper_scissors.games.GameDefinition.{Win, Tie, Item}
+import akka.pattern.ask
+
+import scala.concurrent.{Future, ExecutionContext}
 
 /**
  * A Game running Game

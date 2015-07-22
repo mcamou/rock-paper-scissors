@@ -7,6 +7,14 @@ import com.tecnoguru.rock_paper_scissors.games.GameDefinition.Item
  * @see http://www.samkass.com/theories/RPSSL.html
  */
 object RockPaperScissorsLizardSpock extends Canonical {
+  override val nameToItem = Map(
+    "rock" -> Rock,
+    "paper" -> Paper,
+    "scissors" -> Scissors,
+    "lizard" -> Lizard,
+    "spock" -> Spock
+  )
+
   case object Lizard extends Item
   case object Spock extends Item
 

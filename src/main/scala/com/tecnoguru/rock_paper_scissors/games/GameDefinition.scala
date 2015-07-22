@@ -7,7 +7,9 @@ trait GameDefinition {
   import GameDefinition._
 
   /**
-   * A Map used to convert item names to items
+   * A Map used to convert item names to items. This decreases maintainability but increases extensibility, in the sense
+   * that, on the one hand, you have to make sure that all the Items are included with the proper keys, but on the other
+   * hand, you can plug in new game definitions and map their names in a single place (i.e. the game definition class)
    */
   val nameToItem: Map[String, Item]
 
