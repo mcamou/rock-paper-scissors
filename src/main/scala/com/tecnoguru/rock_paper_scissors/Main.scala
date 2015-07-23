@@ -47,7 +47,7 @@ object Main {
     val userOption = gameDefinition.nameToItem.get(userItemArgument)
 
     if (userOption.isEmpty && userItemArgument != "computer") {
-      println("Illegal option. You must use rock, paper, scissors or computer")
+      println(s"Illegal item. Valid items for this game are: ${gameDefinition.nameToItem.keys.mkString(", ")}")
       System.exit(0)
     }
     // $COVERAGE-ON
