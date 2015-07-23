@@ -51,7 +51,8 @@ object RockPaperScissors extends GameDescription {
   rules (
     Rock breaks Scissors,
     Paper wraps Rock,
-    Scissors cut Paper,  )
+    Scissors cut Paper,
+  )
 }	
 ```
 However, for initial implementation, the following syntax should be sufficient:
@@ -64,10 +65,25 @@ class RockPaperScissors extends GameDescription {
 }	
 ```
 
-Thinking about Akka, it makes sense for the Game to be an Actor. It would then receive the players' guesses, and as soon as it receives 2 guesses it would send back the result of the game to both participants. This enables us to decouple the business rules from the different clients.
+Thinking about Akka, it makes sense for the Game to be an Actor. It would then receive the players' guesses, and as soon as it receives 2 guesses it would send back the result of the game to both participants. This enables us to decouple the business rules from the different clients. Also, having the reply go to both senders would enable Human-to-Human gameplay in the future.
 
 As far as the UI is concerned, an initial version would use the command line. We can later add a REST interface.
 
 The system should validate that there are no conflicting/duplicate rules. Ideally it should also validate that the game is complete (i.e. that there are no missing options)
 
 It would also be good to have some sort of Game Registry, so that we could give the user the option of starting a different Game type each time.
+
+Having implemented the command-line version, it's time to implement a web version. The initial idea would be to implement a simple interface over HTTP. JSON and a full REST protocol are probably overkill for this, perhaps a single URI such as this:
+
+```
+/<game_type>/<item>
+```
+
+If no `<item>` is provided, a computer-vs-computer game would be executed.
+
+The reply would initially be just text, similar to what the command-line version shows. A next enhancement would be to reply with JSON and provide a simple web front-end.
+
+I will add an additional option when running the application from the command line. When running with the `web` parameter, it will start a web server. The second parameter would be the port number, using a reasonable default such as 8080 or 8000.
+ 
+For this a small refactoring is needed so we don't duplicate code in the Main method. Also, having those println statements in 2 or 3 methods in the Main class is not a good design (although it worked for getting something up and running quickly).
+ 

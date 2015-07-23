@@ -58,8 +58,8 @@ object Main {
   /**
    * Select the game depending on the parameters the user passed. For real life this is probably not the best idea, I
    * would add some sort of GameTypeRegistry where we could register games with their names.
-   * @param args
-   * @return
+   * @param args The command-line arguments
+   * @return The selected game
    */
   private def selectGame(args: Array[String]): Canonical = {
     if (args.length == 1) {
@@ -88,24 +88,16 @@ object Main {
       case None ⇒
         val player1Item = generateComputerItem(definition)
         val player2Item = generateComputerItem(definition)
-
-        println(s"Player 1 selected $player1Item")
-        println(s"Player 2 selected $player2Item")
-
         play(game, "Player 1", "Player 2", player1Item, player2Item)
 
       case Some(userItem) ⇒
         val computerItem = generateComputerItem(definition)
-
-        println(s"You selected $userItem")
-        println(s"The computer selected $computerItem")
-
         play(game, "You", "The computer", userItem, computerItem)
     }
 
-    result foreach { result ⇒
-      println(result)
-      system.shutdown
+    result foreach { r ⇒
+      println(r)
+      system.shutdown()
     }
   }
 
@@ -124,15 +116,17 @@ object Main {
   private def play(game: ActorRef, player1Name: String, player2Name: String, player1Item: Item, player2Item: Item)(implicit ec: ExecutionContext, timeout: Timeout): Future[String] = {
     game ! player1Item
 
+    val prefix = s"$player1Name selected $player1Item\n$player2Name selected $player2Item\n"
+
     (game ? player2Item) map {
       case Tie ⇒
-        s"$player1Name tied with $player2Name"
+        s"$prefix$player1Name tied with $player2Name"
 
       case Win(`player1Item`, name, p2Item) ⇒
-        s"$player1Name won! $player1Item $name $player2Item"
+        s"$prefix$player1Name won! $player1Item $name $player2Item"
 
       case Win(cItem, name, _) ⇒
-        s"$player2Name won! $player2Item $name $player1Item"
+        s"$prefix$player2Name won! $player2Item $name $player1Item"
     }
   }
 
