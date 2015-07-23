@@ -86,4 +86,12 @@ The reply would initially be just text, similar to what the command-line version
 I will add an additional option when running the application from the command line. When running with the `web` parameter, it will start a web server. The second parameter would be the port number, using a reasonable default such as 8080 or 8000.
  
 For this a small refactoring is needed so we don't duplicate code in the Main method. Also, having those println statements in 2 or 3 methods in the Main class is not a good design (although it worked for getting something up and running quickly).
- 
+
+After a second thought, the user's selected item should probably be a URL parameter, so the URI would be:
+
+```
+/<game_type>?item=<item>
+```
+
+To me this feels a bit better. We could also have a full JSON body for the user's selection but it's probably
+overkill for this. If you want to play a computer vs computer game, you leave out the item parameter.
