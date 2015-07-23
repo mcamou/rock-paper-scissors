@@ -95,3 +95,5 @@ After a second thought, the user's selected item should probably be a URL parame
 
 To me this feels a bit better. We could also have a full JSON body for the user's selection but it's probably
 overkill for this. If you want to play a computer vs computer game, you leave out the item parameter.
+
+For unit testing purposes, we need to create the GameRegistry and inject it into the ApiService. That will allow us to inject a mock game registry during testing. In the future we can make it an Actor and have it also create the Games, so that we can have, for example, a backend server which runs the games and a frontend server which runs only the web interface) but for the current problem that is overkill (YAGNI). A part here that is a bit ugly is the population of this GameRegistry. I would like to have it auto-populated by the GameDefinitions, but this will do away with the possibility of plugging in a different one for testing. Therefore, the population will currently have to be done by the Main class.

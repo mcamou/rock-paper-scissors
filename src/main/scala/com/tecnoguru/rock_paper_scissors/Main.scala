@@ -5,7 +5,7 @@ import java.util.concurrent.TimeUnit
 import akka.actor.{ ActorRef, ActorSystem }
 import akka.pattern.ask
 import akka.util.Timeout
-import com.tecnoguru.rock_paper_scissors.games.{ RockPaperScissorsLizardSpock, GameDefinition, Canonical }
+import com.tecnoguru.rock_paper_scissors.games.{ GameRegistry, RockPaperScissorsLizardSpock, GameDefinition, Canonical }
 import com.tecnoguru.rock_paper_scissors.games.Canonical.{ Scissors, Paper, Rock }
 import com.tecnoguru.rock_paper_scissors.games.GameDefinition.{ Win, Tie, Item }
 
@@ -37,22 +37,28 @@ object Main {
           |
           |Enjoy!
         """.stripMargin)
+    } else {
+      val registry = registerGames()
+      val gameDefinition = selectGame(registry, args)
 
-      System.exit(0)
+      val userItemArgument = args(0).toLowerCase
+      val userOption = gameDefinition.nameToItem.get(userItemArgument)
+
+      if (userOption.isEmpty && userItemArgument != "computer") {
+        println(s"Illegal item. Valid items for this game are: ${gameDefinition.nameToItem.keys.mkString(", ")}")
+        System.exit(0)
+      }
+      // $COVERAGE-ON
+
+      startGame(userOption, gameDefinition)
     }
+  }
 
-    val gameDefinition: GameDefinition = selectGame(args)
-
-    val userItemArgument = args(0).toLowerCase
-    val userOption = gameDefinition.nameToItem.get(userItemArgument)
-
-    if (userOption.isEmpty && userItemArgument != "computer") {
-      println(s"Illegal item. Valid items for this game are: ${gameDefinition.nameToItem.keys.mkString(", ")}")
-      System.exit(0)
-    }
-    // $COVERAGE-ON
-
-    startGame(userOption, gameDefinition)
+  private def registerGames(): GameRegistry = {
+    val registry = new GameRegistry
+    registry.register("canonical", Canonical)
+    registry.register("spock", RockPaperScissorsLizardSpock)
+    registry
   }
 
   /**
@@ -61,15 +67,19 @@ object Main {
    * @param args The command-line arguments
    * @return The selected game
    */
-  private def selectGame(args: Array[String]): Canonical = {
+  private def selectGame(registry: GameRegistry, args: Array[String]): GameDefinition = {
     if (args.length == 1) {
       Canonical
-    } else if (args(1).toLowerCase == "spock") {
-      RockPaperScissorsLizardSpock
     } else {
-      println("Illegal game type. Currently the only alternate game type supported is \"spock\"")
-      System.exit(0)
-      Canonical // Useless, necessary because Scala doesn't know that System.exit will never return
+      registry.getGame(args(1)) match {
+        case Some(gameDefinition) ⇒
+          gameDefinition
+
+        case None ⇒
+          println(s"Illegal game type. Available game types are: ${registry.getAvailableGames.mkString(", ")}")
+          System.exit(0)
+          Canonical // Useless, necessary because Scala doesn't know that System.exit will never return
+      }
     }
   }
 
