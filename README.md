@@ -91,6 +91,8 @@ The code coverage reports are written to `target/scala-2.11/scoverage-report`
 
 # Missing functionality, extensions and other notes
 
+Please note that there are more commits than I would usually make, especially at the beginning, since one of the purposes of this exercise is to see how the program evolved over time.
+
 Some things I didn't have the time for:
 
 * The web service has no way to query the list of the available items.
