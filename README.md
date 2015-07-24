@@ -62,10 +62,10 @@ The URLs simply have the game type as first element. If you do not pass in any p
 
 ```json
 {
-  player1Item: "Scissors",
-  player2Item: "Paper",
-  winner: "player 1",
-  relationship: "cuts"
+  "player1Item": "Scissors",
+  "player2Item": "Paper",
+  "winner": "player 1",
+  "relationship": "cuts"
 }
 ```
 
