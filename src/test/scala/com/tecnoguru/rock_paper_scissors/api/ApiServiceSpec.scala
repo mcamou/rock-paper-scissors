@@ -1,10 +1,12 @@
 package com.tecnoguru.rock_paper_scissors.api
 
-import akka.testkit.{TestKitBase, TestProbe}
-import com.tecnoguru.rock_paper_scissors.games.GameDefinition.{Item, Win}
-import com.tecnoguru.rock_paper_scissors.games.{GameDefinition, GameRegistry, ValidGameDefinition}
+import akka.testkit.{ TestKitBase, TestProbe }
+import com.tecnoguru.rock_paper_scissors.games.GameDefinition.{ Item, Win }
+import com.tecnoguru.rock_paper_scissors.games.ValidGameDefinition.Item1
+import com.tecnoguru.rock_paper_scissors.games.{NonCyclicGameDefinition, GameDefinition, GameRegistry, ValidGameDefinition}
 import org.json4s.JObject
-import org.scalatest.{BeforeAndAfterAll, MustMatchers, WordSpec}
+import org.json4s.JsonAST.{JString, JArray}
+import org.scalatest.{ BeforeAndAfterAll, MustMatchers, WordSpec }
 import spray.http.StatusCodes
 import spray.testkit.ScalatestRouteTest
 
@@ -22,6 +24,7 @@ class ApiServiceSpec extends WordSpec
 
   override def beforeAll() = {
     gameRegistry.register("valid", ValidGameDefinition)
+    gameRegistry.register("noncyclic", NonCyclicGameDefinition)
   }
 
   // Override the createGame method so we can control the test
@@ -31,7 +34,11 @@ class ApiServiceSpec extends WordSpec
     "it receives a GET for the root document" must {
       "reply with a NotFound error code" in {
         Get() ~> route ~> check {
-          status mustEqual StatusCodes.NotFound
+          status mustEqual StatusCodes.OK
+
+          val expected = Seq(JString("http://example.com/valid"), JString("http://example.com/noncyclic"))
+
+          responseAs[JArray].arr must contain theSameElementsAs expected
         }
       }
     }
@@ -46,6 +53,7 @@ class ApiServiceSpec extends WordSpec
 
     "it receives a GET for an existing game" must {
       "play a game and reply with a JSON response" in {
+        //TODO Use ScalaCheck for generative testing
         // given
         val result = Get("/valid") ~> route
 
