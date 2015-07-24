@@ -78,5 +78,32 @@ class ApiServiceSpec extends WordSpec
         }
       }
     }
+
+    "it receives a GET for an existing game with a player option" must {
+      "play a game with the given player option" in {
+        // given
+        val result = Get("/valid?item=item1") ~> route
+
+        mockGame expectMsg Item1
+        val item2 = mockGame expectMsgClass classOf[ Item ]
+
+        // when
+        mockGame reply Win(Item1, "beats", item2)
+        mockGame reply Win(Item1, "beats", item2)
+
+        result ~> check {
+          // then
+          status mustEqual StatusCodes.OK
+          responseAs[ JObject ].values must contain theSameElementsAs {
+            Map(
+              "player1Item" -> "Item1",
+              "player2Item" -> item2.toString,
+              "winner" -> "player 1",
+              "relationship" -> "beats"
+            )
+          }
+        }
+      }
+    }
   }
 }

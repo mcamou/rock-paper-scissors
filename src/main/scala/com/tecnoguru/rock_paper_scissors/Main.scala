@@ -58,6 +58,7 @@ object Main {
 
         if (userOption.isEmpty && userItemArgument != "computer") {
           println(s"Illegal item. Valid items for this game are: ${gameDefinition.nameToItem.keys.mkString(", ")}")
+          system.shutdown()
           System.exit(0)
         }
         // $COVERAGE-ON

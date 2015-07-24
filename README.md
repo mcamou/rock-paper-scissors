@@ -39,3 +39,6 @@ The code coverage reports are written to `target/scala-2.11/scoverage-report`
 # Extensions
 
 The game can be easily extended for more complex definitions (i.e. [Rock Paper Scissors Lizard Spock](http://www.samkass.com/theories/RPSSL.html)). For an example of this, see the `com.tecnoguru.rock_paper_scissors.games.RockPaperScissorsLizardSpock` class. Note that any new games you implement must also be added to the GameRegistry in the `Main#registerGames` method.
+
+Also, since the game is implemented using Akka Actors, it can easily be extended for Player vs Player option (via the HTTP interface).
+
