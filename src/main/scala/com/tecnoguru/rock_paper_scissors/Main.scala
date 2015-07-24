@@ -96,12 +96,12 @@ object Main {
 
     val result = userOption match {
       case None ⇒
-        val player1Item = generateComputerItem(definition)
-        val player2Item = generateComputerItem(definition)
+        val player1Item = definition.randomItem
+        val player2Item = definition.randomItem
         play(game, "Player 1", "Player 2", player1Item, player2Item)
 
       case Some(userItem) ⇒
-        val computerItem = generateComputerItem(definition)
+        val computerItem = definition.randomItem
         play(game, "You", "The computer", userItem, computerItem)
     }
 
@@ -139,11 +139,4 @@ object Main {
         s"$prefix$player2Name won! $player2Item $name $player1Item"
     }
   }
-
-  // $COVERAGE-OFF$ Disabling coverage for main class since it is a simple test driver
-  private def generateComputerItem(definition: GameDefinition): Item = {
-    val index = Random.nextInt(definition.nameToItem.size)
-    definition.nameToItem.values.toIndexedSeq(index)
-  }
-  // $COVERAGE-ON
 }

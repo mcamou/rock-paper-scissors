@@ -1,5 +1,7 @@
 package com.tecnoguru.rock_paper_scissors.games
 
+import scala.util.Random
+
 /**
  * All game definitions should implement this trait
  */
@@ -48,6 +50,12 @@ trait GameDefinition {
       }
     }
   }
+
+  def randomItem: Item = {
+    val index = Random.nextInt(nameToItem.size)
+    nameToItem.values.toIndexedSeq(index)
+  }
+
 }
 
 /**
