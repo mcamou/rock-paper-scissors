@@ -1,22 +1,27 @@
 package com.tecnoguru.rock_paper_scissors.api
 
-import akka.actor.{ ActorRef, ActorRefFactory }
+import akka.actor._
+import akka.io.IO
+import akka.pattern.ask
 import akka.util.Timeout
 import com.tecnoguru.rock_paper_scissors.Game
 import com.tecnoguru.rock_paper_scissors.games.GameDefinition.{ Tie, Win }
 import com.tecnoguru.rock_paper_scissors.games.{ GameDefinition, GameRegistry }
+import org.json4s.DefaultFormats
+import spray.can.Http
+import spray.http.StatusCodes
 import spray.http.StatusCodes.NotFound
 import spray.httpx.Json4sJacksonSupport
-import spray.routing.{ HttpService, Route }
-import org.json4s.DefaultFormats
-import akka.pattern.ask
+import spray.routing
+import spray.routing.{ ExceptionHandler, HttpService, HttpServiceActor, Route }
+import spray.util.LoggingContext
+
 import scala.concurrent.duration._
 
 /**
  * Spray service actor to serve HTTP requests
  */
-trait ApiServiceTrait extends HttpService
-    with Json4sJacksonSupport {
+trait ApiServiceTrait extends HttpService with Json4sJacksonSupport {
   implicit val actorRefFactory: ActorRefFactory
   def gameRegistry: GameRegistry
 
@@ -38,11 +43,24 @@ trait ApiServiceTrait extends HttpService
   val route = {
     get {
       pathEndOrSingleSlash {
-        invalidGame(s"Please select a game. Valid game types are: $validGameTypes")
+        showAvailableGames
       } ~
         path(Segment) { gameName ⇒
           selectGame(gameName)
         }
+    }
+  }
+
+  /**
+   * A route that shows the available games in the current game registry
+   */
+  private def showAvailableGames: Route = {
+    requestUri { uri ⇒
+      complete {
+        gameRegistry.getAvailableGames.map { game ⇒
+          uri + game
+        }
+      }
     }
   }
 
@@ -101,4 +119,30 @@ trait ApiServiceTrait extends HttpService
   }
 }
 
-class ApiService(val gameRegistry: GameRegistry)(implicit val actorRefFactory: ActorRefFactory) extends ApiServiceTrait
+class ApiService(val gameRegistry: GameRegistry)
+    extends HttpServiceActor
+    with ApiServiceTrait {
+  import spray.routing.RejectionHandler.Default
+  override implicit val actorRefFactory = context
+  implicit val routingSettings = spray.routing.RoutingSettings.default
+
+  implicit def exceptionHandler(implicit log: LoggingContext) = {
+    ExceptionHandler {
+      case ex: Exception ⇒
+        requestUri { uri ⇒
+          log.error(ex, s"Exception while accessing $uri")
+          complete(StatusCodes.InternalServerError -> ex.getMessage)
+        }
+    }
+  }
+
+  def receive = runRoute(route)
+}
+
+object ApiService {
+  def start(gameRegistry: GameRegistry, port: Int)(implicit system: ActorSystem): Unit = {
+    val service = system.actorOf(Props(classOf[ ApiService ], gameRegistry), "api")
+
+    IO(Http) ! Http.Bind(service, "0.0.0.0", port)
+  }
+}

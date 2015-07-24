@@ -5,6 +5,7 @@ import java.util.concurrent.TimeUnit
 import akka.actor.{ ActorRef, ActorSystem }
 import akka.pattern.ask
 import akka.util.Timeout
+import com.tecnoguru.rock_paper_scissors.api.ApiService
 import com.tecnoguru.rock_paper_scissors.games.{ GameRegistry, RockPaperScissorsLizardSpock, GameDefinition, Canonical }
 import com.tecnoguru.rock_paper_scissors.games.Canonical.{ Scissors, Paper, Rock }
 import com.tecnoguru.rock_paper_scissors.games.GameDefinition.{ Win, Tie, Item }
@@ -35,22 +36,34 @@ object Main {
           |
           |$ java -jar rock_paper_scissors.jar paper spock
           |
+          |You can also run the game as a REST service. To do this, pass "web" as a command-line argument:
+          |
+          |$ java -jar rock_paper_scissors.jar web
+          |
+          |The service will run on port 8080.
+          |
           |Enjoy!
         """.stripMargin)
     } else {
       val registry = registerGames()
-      val gameDefinition = selectGame(registry, args)
+      implicit val system = ActorSystem("Rock-Paper-Scissors")
 
-      val userItemArgument = args(0).toLowerCase
-      val userOption = gameDefinition.nameToItem.get(userItemArgument)
+      if (args.headOption.exists(_.toLowerCase == "web")) {
+        ApiService.start(registry, 8080)
+      } else {
+        val gameDefinition = selectGame(registry, args)
 
-      if (userOption.isEmpty && userItemArgument != "computer") {
-        println(s"Illegal item. Valid items for this game are: ${gameDefinition.nameToItem.keys.mkString(", ")}")
-        System.exit(0)
+        val userItemArgument = args(0).toLowerCase
+        val userOption = gameDefinition.nameToItem.get(userItemArgument)
+
+        if (userOption.isEmpty && userItemArgument != "computer") {
+          println(s"Illegal item. Valid items for this game are: ${gameDefinition.nameToItem.keys.mkString(", ")}")
+          System.exit(0)
+        }
+        // $COVERAGE-ON
+
+        startGame(userOption, gameDefinition)
       }
-      // $COVERAGE-ON
-
-      startGame(userOption, gameDefinition)
     }
   }
 
@@ -87,11 +100,10 @@ object Main {
    * Start a game of rock-paper-scissors
    * @param userOption The user's selected Item
    */
-  private def startGame(userOption: Option[Item], definition: GameDefinition): Unit = {
+  private def startGame(userOption: Option[Item], definition: GameDefinition)(implicit system: ActorSystem): Unit = {
     import scala.concurrent.ExecutionContext.Implicits.global
     implicit val timeout = Timeout(500, TimeUnit.MILLISECONDS)
 
-    val system = ActorSystem("Rock-Paper-Scissors")
     val game = system.actorOf(Game.props(definition))
 
     val result = userOption match {
