@@ -3,9 +3,9 @@ package com.tecnoguru.rock_paper_scissors.api
 import akka.testkit.{ TestKitBase, TestProbe }
 import com.tecnoguru.rock_paper_scissors.games.GameDefinition.{ Item, Win }
 import com.tecnoguru.rock_paper_scissors.games.ValidGameDefinition.Item1
-import com.tecnoguru.rock_paper_scissors.games.{NonCyclicGameDefinition, GameDefinition, GameRegistry, ValidGameDefinition}
+import com.tecnoguru.rock_paper_scissors.games.{ NonCyclicGameDefinition, GameDefinition, GameRegistry, ValidGameDefinition }
 import org.json4s.JObject
-import org.json4s.JsonAST.{JString, JArray}
+import org.json4s.JsonAST.{ JString, JArray }
 import org.scalatest.{ BeforeAndAfterAll, MustMatchers, WordSpec }
 import spray.http.StatusCodes
 import spray.testkit.ScalatestRouteTest
@@ -57,8 +57,8 @@ class ApiServiceSpec extends WordSpec
         // given
         val result = Get("/valid") ~> route
 
-        val item1 = mockGame expectMsgClass classOf[ Item ]
-        val item2 = mockGame expectMsgClass classOf[ Item ]
+        val item1 = mockGame expectMsgClass classOf[Item]
+        val item2 = mockGame expectMsgClass classOf[Item]
 
         // when
         mockGame reply Win(item1, "beats", item2)
@@ -67,7 +67,7 @@ class ApiServiceSpec extends WordSpec
         result ~> check {
           // then
           status mustEqual StatusCodes.OK
-          responseAs[ JObject ].values must contain theSameElementsAs {
+          responseAs[JObject].values must contain theSameElementsAs {
             Map(
               "player1Item" -> item1.toString,
               "player2Item" -> item2.toString,
@@ -85,7 +85,7 @@ class ApiServiceSpec extends WordSpec
         val result = Get("/valid?item=item1") ~> route
 
         mockGame expectMsg Item1
-        val item2 = mockGame expectMsgClass classOf[ Item ]
+        val item2 = mockGame expectMsgClass classOf[Item]
 
         // when
         mockGame reply Win(Item1, "beats", item2)
@@ -94,7 +94,7 @@ class ApiServiceSpec extends WordSpec
         result ~> check {
           // then
           status mustEqual StatusCodes.OK
-          responseAs[ JObject ].values must contain theSameElementsAs {
+          responseAs[JObject].values must contain theSameElementsAs {
             Map(
               "player1Item" -> "Item1",
               "player2Item" -> item2.toString,

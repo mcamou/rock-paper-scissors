@@ -4,7 +4,7 @@ import akka.actor.{ ActorRef, ActorRefFactory }
 import akka.pattern.ask
 import akka.util.Timeout
 import com.tecnoguru.rock_paper_scissors.Game
-import com.tecnoguru.rock_paper_scissors.games.GameDefinition.{ Tie, Win }
+import com.tecnoguru.rock_paper_scissors.games.GameDefinition.{ Item, Tie, Win }
 import com.tecnoguru.rock_paper_scissors.games.{ GameDefinition, GameRegistry }
 import org.json4s.DefaultFormats
 import spray.http.StatusCodes._
@@ -41,7 +41,9 @@ trait ApiServiceTrait extends HttpService with Json4sJacksonSupport {
         showAvailableGames
       } ~
         path(Segment) { gameName ⇒
-          selectGame(gameName)
+          parameters('item.?) { userItem ⇒
+            selectGame(gameName, userItem)
+          }
         }
     }
   }
@@ -64,10 +66,12 @@ trait ApiServiceTrait extends HttpService with Json4sJacksonSupport {
    * @param gameName The name of the game the user wants to play
    * @return A Route that plays that game if it exists or returns an appropriate error
    */
-  private def selectGame(gameName: String): Route = {
+  private def selectGame(gameName: String, itemParameter: Option[String]): Route = {
     gameRegistry.getGame(gameName) match {
-      case Some(game) ⇒ playGame(game)
-      case None       ⇒ invalidGame(s"Valid game types are: $validGameTypes")
+      case Some(game) ⇒
+        val userItem = itemParameter flatMap game.nameToItem.get
+        playGame(game, userItem)
+      case None ⇒ invalidGame(s"Valid game types are: $validGameTypes")
     }
   }
 
@@ -76,12 +80,12 @@ trait ApiServiceTrait extends HttpService with Json4sJacksonSupport {
    * @param definition the game to play
    * @return a route that plays the given game
    */
-  private def playGame(definition: GameDefinition): Route = {
+  private def playGame(definition: GameDefinition, userItem: Option[Item]): Route = {
     implicit val timeout = Timeout(500.millis)
     import actorRefFactory.dispatcher
 
     val game = createGame(definition)
-    val player1Item = definition.randomItem
+    val player1Item = userItem getOrElse definition.randomItem
     val player2Item = definition.randomItem
 
     game ! player1Item
